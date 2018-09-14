@@ -37,6 +37,42 @@ pub trait Wrapper<'a, E: Endpoint<'a>> {
     fn wrap(self, endpoint: E) -> Self::Endpoint;
 }
 
+#[allow(missing_docs)]
+pub trait WrapperExt: Sized {
+    fn compose<W>(self, other: W) -> Composed<Self, W> {
+        Composed {
+            wrapper1: self,
+            wrapper2: other,
+        }
+    }
+}
+
+impl<W> WrapperExt for W {}
+
+#[allow(missing_docs)]
+#[derive(Debug)]
+pub struct Composed<W1, W2> {
+    wrapper1: W1,
+    wrapper2: W2,
+}
+
+impl<'a, E, W1, W2> Wrapper<'a, E> for Composed<W1, W2>
+where
+    E: Endpoint<'a>,
+    W1: Wrapper<'a, E>,
+    W2: Wrapper<'a, <W1 as Wrapper<'a, E>>::Endpoint>,
+{
+    type Output = W2::Output;
+    type Endpoint = W2::Endpoint;
+
+    fn wrap(self, endpoint: E) -> Self::Endpoint {
+        endpoint
+            .wrap(self.wrapper1)
+            .wrap(self.wrapper2)
+            .with_output::<W2::Output>()
+    }
+}
+
 /// A set of extension methods for using built-in `Wrapper`s.
 pub trait EndpointWrapExt<'a>: Endpoint<'a> + Sized {
     #[allow(missing_docs)]
@@ -114,3 +150,26 @@ pub trait EndpointWrapExt<'a>: Endpoint<'a> + Sized {
 }
 
 impl<'a, E: Endpoint<'a>> EndpointWrapExt<'a> for E {}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::endpoint;
+
+    #[test]
+    fn test_compose() {
+        fn assert_impl<E>(endpoint: E)
+        where
+            for<'a> E: Endpoint<'a>,
+        {
+            drop(endpoint)
+        }
+
+        let w1 = before_apply(|_| Ok(()));
+        let w2 = after_apply(|_| Ok(()));
+        let wrapper = w1.compose(w2);
+
+        let endpoint = endpoint::unit().wrap(wrapper);
+        assert_impl(endpoint);
+    }
+}

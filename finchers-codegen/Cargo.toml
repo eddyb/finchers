@@ -1,22 +1,22 @@
-cargo-features = ["edition"]
-
 [package]
-name = "finchers-derive"
-version = "0.12.0-dev"
+name = "finchers-codegen"
+version = "0.1.0-alpha.1"
 edition = "2018"
 authors = ["Yusuke Sasaki <yusuke.sasaki.nuem@gmail.com>"]
 license = "MIT/Apache-2.0"
 repository = "https://github.com/finchers-rs/finchers.git"
 homepage = "https://finchers-rs.github.io"
-documentation = "https://docs.rs/finchers-derive"
+documentation = "https://docs.rs/finchers-codegen"
 description = """
 Custom derive for Finchers
 """
+publish = false
 
 [lib]
 proc-macro = true
+path = "lib.rs"
 
 [dependencies]
-syn = "0.14.7"
-quote = "0.6.5"
-proc-macro2 = "0.4.9"
+syn = { version = "0.15.4", features = ["full", "extra-traits"] }
+quote = "0.6.8"
+proc-macro2 = "0.4.19"

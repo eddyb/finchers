@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["basic",""],["bearer",""],["custom",""],["proxy",""]],"struct":[["Authorization",""],["Basic","Credential holder for Basic Authentication"],["Bearer","Token holder for Bearer Authentication, most often seen with oauth"],["ProxyAuthorization",""]],"trait":[["Scheme","An Authorization scheme to be used in the header."]]});

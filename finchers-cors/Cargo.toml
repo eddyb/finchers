@@ -9,3 +9,6 @@ strict = []
 
 [dependencies]
 finchers = { version = "0.12.0-alpha.5", path = ".." }
+http = "0.1"
+futures-preview = "0.3.0-alpha.6"
+pin-utils = "0.1.0-alpha.2"
